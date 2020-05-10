@@ -1,0 +1,11 @@
+---
+
+- name: web servers
+  hosts: web
+  become: true
+  tasks:
+    - name: install Apache
+      yum:
+        - 
+
+...

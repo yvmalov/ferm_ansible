@@ -1,0 +1,17 @@
+---
+
+- name: my first play
+  hosts: web
+  become: true
+  tasks:
+   - name: ping
+     ping:
+   - name: show hostname
+     command: hostname
+   - name: install Apache web-server
+     yum:
+       name: httpd
+       state: present
+       update_cache: true
+
+...
