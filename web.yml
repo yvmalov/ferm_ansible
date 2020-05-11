@@ -6,8 +6,19 @@
   tasks:
     - name: install Apache
       yum:
-          name: httpd
-          state: present
-          update_cache: true
+        name: httpd
+        state: present
+        update_cache: true
+    - name: start Apache service
+      service:
+        name: httpd
+        state: started
+    - name: copy index.html
+      copy:
+        content: "Welcome to the web server: {{ ansible_facts.hostname }}"
+        dest: "/var/www/html/index.html"
+        owner: root
+        group: root
+        mode: 0644
 
 ...
