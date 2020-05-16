@@ -1,0 +1,18 @@
+---
+
+- name: common tasks
+  hosts: all
+  tasks:
+  - name: update /etc/hosts
+    lineinfile:
+      path: "{{ hostsfile }}"
+      regexp: "{{ item }}$"
+      line: "{{ hostvars[item].ansible_facts.eth0.ipv4.address }} {{ hostvars[item].ansible_facts.hostname }}.{{ domainname }} {{ hostvars[item].ansible_facts.hostname }}"
+    loop: "{{ groups['all'] }}"
+
+#    - name: debug
+#      debug:
+#        msg: "{{ hostvars[item].ansible_facts.eth0.ipv4.address }} {{ hostvars[item].ansible_facts.hostname }}.{{ domainname }} {{ hostvars[item].ansible_facts.hostname }}"
+#      loop: "{{ groups['all'] }}"
+
+...

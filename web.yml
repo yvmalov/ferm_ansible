@@ -2,7 +2,7 @@
 
 - name: web servers
   hosts: web
-  become: true
+#  become: true
   tasks:
     - name: install Apache
       yum:
@@ -13,12 +13,31 @@
       service:
         name: httpd
         state: started
+        enabled: yes
     - name: copy index.html
       copy:
-        content: "Welcome to the web server: {{ ansible_facts.hostname }}"
-        dest: "/var/www/html/index.html"
+        src: "{{ item }}"
+        dest: "{{ document_root_path }}"
         owner: root
         group: root
         mode: 0644
+      loop:
+        - files/index.html
+    - name: copy vhost config
+      copy:
+        src: files/ansible_site.conf
+        dest: "{{ vhost_config_file }}"
+        owner: root
+        group: root
+        mode: 0644
+    - name: configure.httpd.conf
+      lineinfile:
+        path: "{{ apache_config_file }}"
+        regexp: "^IncludeOptional"
+        line: "IncludeOptional conf.d/*.conf"
+    - name: restart Apache
+      service:
+        name: httpd
+        state: restarted
 
 ...

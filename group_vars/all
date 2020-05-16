@@ -1,0 +1,2 @@
+domainname: "testdomain.com"
+hostsfile: "/etc/hosts"
