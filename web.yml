@@ -4,9 +4,9 @@
   hosts: web
 #  become: true
   tasks:
-    - name: install Apache
+    - name: install Apache, Git
       yum:
-        name: httpd
+        name: httpd,git
         state: present
         update_cache: true
 
@@ -23,40 +23,31 @@
         state: started
         enabled: yes
 
-    - name: copy index.html
-      copy:
-        src: "{{ item }}"
+    - name: deploy index.php
+      git:
+        repo: "{{ repository }}"
         dest: "{{ document_root_path }}"
-        owner: root
-        group: root
-        mode: 0644
-      loop:
-        - files/index.html
 
-    - name: copy vhost config
-      copy:
-        src: files/ansible_site.conf
-        dest: "{{ vhost_config_file }}"
-        owner: root
-        group: root
-        mode: 0644
-      notify: restart apache
-
-    - name: check config
-      command: httpd -t
-      register: result
-      ignore_errors: yes
-
-    - name: remove bad vhost conf file
-      file:
-        path: "{{ vhost_config_file }}"
-        state: absent
-      when: result is failed
-
-    - name: rolling back - ending playbook
-      fail:
-        msg: "Conf file is not valid. Please check that before re-running the playbook"
-      when: result is failed
+    - name: vhost config block
+      block:
+      - name: copy vhost config
+        copy:
+          src: files/ansible_site.conf
+          dest: "{{ vhost_config_file }}"
+          owner: root
+          group: root
+          mode: 0644
+        notify: restart apache
+      - name: check config
+        command: httpd -t
+      rescue:
+      - name: remove bad vhost conf file
+        file:
+          path: "{{ vhost_config_file }}"
+          state: absent
+      - name: rolling back - ending playbook
+        fail:
+          msg: "Conf file is not valid. Please check that before re-running the playbook"
 
     - name: configure.httpd.conf
       lineinfile:

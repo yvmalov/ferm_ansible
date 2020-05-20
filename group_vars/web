@@ -1,3 +1,4 @@
 vhost_config_file: /etc/httpd/conf.d/ansible.conf
 apache_config_file: /etc/httpd/conf/httpd.conf
 document_root_path: /var/www/ansible/
+repository: https://github.com/yvmalov/ansible_essentials.git
