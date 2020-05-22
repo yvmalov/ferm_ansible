@@ -1,0 +1,16 @@
+---
+
+- hosts: control
+  vars:
+    name: "Nginx"
+    version: "4.23"
+    list: ["Apple","Orange","Burberry"]
+  tasks:
+  - name: Copy template file
+    template:
+      src: templates/nginx.j2
+      dest: /tmp/check.txt
+  - name: Copy template - loop
+    template:
+      src: templates/file1.j2
+      dest: /tmp/list.txt
