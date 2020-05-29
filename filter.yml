@@ -1,0 +1,12 @@
+---
+
+- hosts: controller
+  vars:
+    myvar: text
+  tasks:
+    - name: show myvar
+      debug:
+        msg: "{{ myvar }}"
+    - name: ansible int filter example
+      debug:
+        msg: "{{ myvar | to_json }}"
