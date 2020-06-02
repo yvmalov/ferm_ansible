@@ -12,7 +12,11 @@
 
     - name: install packages
       yum:
-        name: php
+        name:
+          - php
+          - php-mysql
+          - php-pdo
+          - php-pdo_mysql
         state: present
         update_cache: true
       notify: restart apache
@@ -55,6 +59,16 @@
         regexp: "^IncludeOptional"
         line: "IncludeOptional conf.d/*.conf"
       notify: restart apache
+
+    - name: install hello world script with db
+      copy:
+        src: files/db.php
+        dest: "{{ document_root_path }}db.php"
+        mode: 0775
+
+#    - name: disable selinux
+#      selinux:
+#        state: disable
 
   handlers:
     - name: restart apache
