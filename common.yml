@@ -3,6 +3,7 @@
 - name: common tasks
   hosts: all
   tasks:
+
   - name: update /etc/hosts
     lineinfile:
       path: "{{ hostsfile }}"
@@ -10,9 +11,29 @@
       line: "{{ hostvars[item].ansible_facts.eth0.ipv4.address }} {{ hostvars[item].ansible_facts.hostname }}.{{ domainname }} {{ hostvars[item].ansible_facts.hostname }}"
     loop: "{{ groups['all'] }}"
 
-#    - name: debug
-#      debug:
-#        msg: "{{ hostvars[item].ansible_facts.eth0.ipv4.address }} {{ hostvars[item].ansible_facts.hostname }}.{{ domainname }} {{ hostvars[item].ansible_facts.hostname }}"
-#      loop: "{{ groups['all'] }}"
+  - name: install common packages
+    yum:
+      name:
+        - ntp
+      state: present
+      update_cache: true
 
-...
+  - name: config ntp
+    template:
+      src: "{{ ntp_template_file }}"
+      dest: "{{ ntp_config_file }}"
+    notify: restart ntp
+
+  - name: start and enable services
+    service:
+      name: "{{ item }}"
+      state: restarted
+      enabled: true
+    loop:
+      - ntpd
+
+  handlers:
+    - name: restart ntp
+      service:
+        name: ntpd
+        state: restarted

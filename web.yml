@@ -66,10 +66,6 @@
         dest: "{{ document_root_path }}db.php"
         mode: 0775
 
-#    - name: disable selinux
-#      selinux:
-#        state: disable
-
   handlers:
     - name: restart apache
       service:
